@@ -36,7 +36,7 @@ python3 skilldoc.py check --filter broken
 ### Heartbeat Check
 Add to HEARTBEAT.md for periodic skill health monitoring:
 ```bash
-python3 ~/workspace/agent-forge/2026-02-11-skilldoc/skilldoc.py check --json /tmp/skilldoc.json
+python3 ~/workspace/agent-forge/2026-02-11-skilldoc/skilldoc.py check --json
 ```
 
 ### After `openclaw update`
