@@ -20,11 +20,54 @@ try:
 except ImportError:
     yaml = None
 
-# Skill directories to scan
-SKILL_DIRS = [
+# Default skill directories to scan
+DEFAULT_SKILL_DIRS = [
     os.path.expanduser("/opt/homebrew/lib/node_modules/openclaw/skills"),
     os.path.expanduser("~/workspace/skills"),
 ]
+
+
+def get_skill_dirs(extra_dirs=None):
+    """Build skill directory list from OpenClaw config + defaults + extra dirs."""
+    dirs = list(DEFAULT_SKILL_DIRS)
+
+    # Try reading custom skill paths from OpenClaw config
+    for config_path in [
+        os.path.expanduser("~/.openclaw/openclaw.json"),
+        os.path.expanduser("~/.clawdbot/clawdbot.json"),
+    ]:
+        try:
+            with open(config_path) as f:
+                config = json.load(f)
+            # Check skills.dirs or skills.paths in config
+            skills_cfg = config.get("skills", {})
+            if isinstance(skills_cfg, dict):
+                for key in ("dirs", "paths", "directories"):
+                    paths = skills_cfg.get(key, [])
+                    if isinstance(paths, list):
+                        dirs.extend([os.path.expanduser(p) for p in paths])
+                    elif isinstance(paths, str):
+                        dirs.append(os.path.expanduser(paths))
+            break  # Use first config found
+        except (FileNotFoundError, json.JSONDecodeError, KeyError):
+            continue
+
+    # Add extra dirs from CLI
+    if extra_dirs:
+        dirs.extend([os.path.expanduser(d) for d in extra_dirs])
+
+    # Deduplicate while preserving order
+    seen = set()
+    unique = []
+    for d in dirs:
+        real = os.path.realpath(d)
+        if real not in seen:
+            seen.add(real)
+            unique.append(d)
+    return unique
+
+
+SKILL_DIRS = DEFAULT_SKILL_DIRS  # Will be overridden in main()
 
 def parse_frontmatter(path):
     """Extract YAML frontmatter from SKILL.md."""
@@ -100,12 +143,13 @@ def check_binary_version(name):
     except Exception:
         return None
 
-def scan_skills():
+def scan_skills(skill_dirs=None):
     """Scan all skill directories and return skill info."""
     skills = []
     current_os = platform.system().lower()
+    dirs = skill_dirs or SKILL_DIRS
     
-    for skill_dir in SKILL_DIRS:
+    for skill_dir in dirs:
         if not os.path.isdir(skill_dir):
             continue
         for skill_path in sorted(glob.glob(os.path.join(skill_dir, "*/SKILL.md"))):
@@ -224,9 +268,12 @@ def main():
     parser.add_argument("--json", action="store_true", dest="json_out", help="JSON output")
     parser.add_argument("--filter", choices=["healthy", "broken"], help="Filter by status")
     parser.add_argument("--skill", help="Check a specific skill by name")
+    parser.add_argument("--dirs", nargs="+", metavar="DIR", help="Additional skill directories to scan")
     args = parser.parse_args()
     
-    skills = scan_skills()
+    global SKILL_DIRS
+    SKILL_DIRS = get_skill_dirs(extra_dirs=args.dirs)
+    skills = scan_skills(SKILL_DIRS)
     
     if args.skill:
         skills = [s for s in skills if s["name"] == args.skill]
