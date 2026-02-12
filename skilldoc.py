@@ -116,12 +116,14 @@ def _parse_simple_frontmatter(text):
     if json_match:
         try:
             oc = json.loads(json_match.group(1))
-            result.setdefault("metadata", {})["openclaw"] = oc
+            if "metadata" not in result or not isinstance(result.get("metadata"), dict):
+                result["metadata"] = {}
+            result["metadata"]["openclaw"] = oc
         except json.JSONDecodeError:
             pass
     # Also try the full metadata block as JSON
     meta_match = re.search(r'metadata\s*:\s*\n\s*(\{[\s\S]*?\})\s*\n---', text + "\n---")
-    if meta_match and "metadata" not in result:
+    if meta_match and (not isinstance(result.get("metadata"), dict)):
         try:
             result["metadata"] = json.loads(meta_match.group(1))
         except json.JSONDecodeError:
