@@ -39,7 +39,14 @@ def get_skill_dirs(extra_dirs=None):
         try:
             with open(config_path) as f:
                 config = json.load(f)
-            # Check skills.dirs or skills.paths in config
+            # Check agents.defaults.skillDirs (actual OpenClaw schema)
+            agents_cfg = config.get("agents", {}).get("defaults", {})
+            skill_dirs_cfg = agents_cfg.get("skillDirs", [])
+            if isinstance(skill_dirs_cfg, list):
+                dirs.extend([os.path.expanduser(p) for p in skill_dirs_cfg])
+            elif isinstance(skill_dirs_cfg, str):
+                dirs.append(os.path.expanduser(skill_dirs_cfg))
+            # Also check skills.dirs/paths as fallback
             skills_cfg = config.get("skills", {})
             if isinstance(skills_cfg, dict):
                 for key in ("dirs", "paths", "directories"):
@@ -67,7 +74,7 @@ def get_skill_dirs(extra_dirs=None):
     return unique
 
 
-SKILL_DIRS = DEFAULT_SKILL_DIRS  # Will be overridden in main()
+# SKILL_DIRS removed — dirs are piped through function args
 
 def parse_frontmatter(path):
     """Extract YAML frontmatter from SKILL.md."""
@@ -147,7 +154,7 @@ def scan_skills(skill_dirs=None):
     """Scan all skill directories and return skill info."""
     skills = []
     current_os = platform.system().lower()
-    dirs = skill_dirs or SKILL_DIRS
+    dirs = skill_dirs or DEFAULT_SKILL_DIRS
     
     for skill_dir in dirs:
         if not os.path.isdir(skill_dir):
@@ -271,9 +278,8 @@ def main():
     parser.add_argument("--dirs", nargs="+", metavar="DIR", help="Additional skill directories to scan")
     args = parser.parse_args()
     
-    global SKILL_DIRS
-    SKILL_DIRS = get_skill_dirs(extra_dirs=args.dirs)
-    skills = scan_skills(SKILL_DIRS)
+    skill_dirs = get_skill_dirs(extra_dirs=args.dirs)
+    skills = scan_skills(skill_dirs)
     
     if args.skill:
         skills = [s for s in skills if s["name"] == args.skill]
