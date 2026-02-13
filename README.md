@@ -1,6 +1,21 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub Repo stars](https://img.shields.io/github/stars/jugaad-lab/skilldoc?style=social)](https://github.com/jugaad-lab/skilldoc/stargazers)
+
 # 🩺 skilldoc — Skill Doctor for OpenClaw
 
 Validates all installed OpenClaw skills by checking their declared dependencies (binaries, OS requirements) and reports which are healthy, broken, or missing deps.
+
+> 📌 **If you find this useful, please ⭐ star this repo!** It helps other developers maintain healthy OpenClaw installations.
+
+## Quick Install
+
+```bash
+# Clone and run
+git clone https://github.com/jugaad-lab/skilldoc.git
+cd skilldoc
+pip install pyyaml  # optional but recommended
+python3 skilldoc.py check
+```
 
 ## The Problem
 
@@ -54,3 +69,18 @@ Run `skilldoc check` after updates to see if new skills need dependencies instal
 
 - Python 3.10+
 - PyYAML (`pip install pyyaml`) — falls back to regex parsing if unavailable
+
+---
+## More from Jugaad Lab 🔧
+| Tool | What it does |
+|------|-------------|
+| [claude-code-mastery](https://github.com/jugaad-lab/claude-code-mastery) | Master Claude Code with subagents & automation |
+| [tokenmeter](https://github.com/jugaad-lab/tokenmeter) | Track AI token usage & costs locally |
+| [clawguard](https://github.com/jugaad-lab/clawguard) | Security blacklist for AI agents |
+| [clawdscan](https://github.com/jugaad-lab/clawdscan) | Session health analyzer for OpenClaw |
+| [skilldoc](https://github.com/jugaad-lab/skilldoc) | Skill health checker for OpenClaw |
+| [tribe-protocol](https://github.com/jugaad-lab/tribe-protocol) | Trust & access control for AI bots |
+| [discord-voice-plugin](https://github.com/jugaad-lab/discord-voice-plugin) | Voice conversations with AI in Discord |
+| [worldmonitor](https://github.com/jugaad-lab/worldmonitor) | Real-time global intelligence dashboard |
+
+⭐ **Found these useful? Star the repos you like!**
