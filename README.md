@@ -3,6 +3,8 @@
 
 # 🩺 skilldoc — Skill Doctor for OpenClaw
 
+> ⭐ **Found this useful? [Star this repo](https://github.com/jugaad-lab/skilldoc)** to help others discover it!
+
 Validates all installed OpenClaw skills by checking their declared dependencies (binaries, OS requirements) and reports which are healthy, broken, or missing deps.
 
 > 📌 **If you find this useful, please ⭐ star this repo!** It helps other developers maintain healthy OpenClaw installations.
@@ -84,3 +86,9 @@ Run `skilldoc check` after updates to see if new skills need dependencies instal
 | [worldmonitor](https://github.com/jugaad-lab/worldmonitor) | Real-time global intelligence dashboard |
 
 ⭐ **Found these useful? Star the repos you like!**
+
+## 🤝 Contributing
+
+Found a bug? Have an idea? [Open an issue](https://github.com/jugaad-lab/skilldoc/issues) or submit a PR!
+
+If this tool saved you time, please ⭐ **star this repo** — it helps others find it.
